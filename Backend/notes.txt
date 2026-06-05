@@ -1,0 +1,196 @@
+# Prisma v7 + PostgreSQL + Express (JavaScript)
+
+## 1. Install
+
+npm install prisma --save-dev
+npm install @prisma/client @prisma/adapter-pg pg dotenv
+
+---
+
+## 2. package.json
+
+{
+  "type": "module"
+}
+
+---
+
+## 3. Init Prisma
+
+npx prisma init --datasource-provider postgresql
+
+---
+
+## 4. .env
+
+DATABASE_URL="postgresql://postgres:password@localhost:5432/mydb?schema=public"
+
+---
+
+## 5. prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String?
+}
+
+---
+
+## 6. Create Tables
+
+npx prisma migrate dev --name init
+npx prisma generate
+
+NOTE:
+- "init" is migration name only
+- Prisma creates tables automatically
+
+---
+
+## 7. prisma.js
+
+import 'dotenv/config'
+
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from './generated/prisma/client.js'
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL
+})
+
+const prisma = new PrismaClient({
+  adapter
+})
+
+export default prisma
+
+---
+
+## 8. index.js
+
+import express from 'express'
+import prisma from './prisma.js'
+
+const app = express()
+
+app.use(express.json())
+
+app.get('/users', async (req, res) => {
+  const users = await prisma.user.findMany()
+
+  res.json(users)
+})
+
+app.listen(3000)
+
+---
+
+## 9. Run Server
+
+node index.js
+
+OR
+
+npm install nodemon --save-dev
+
+package.json
+
+"scripts": {
+  "dev": "nodemon index.js"
+}
+
+npm run dev
+
+---
+
+## 10. Prisma Studio
+
+npx prisma studio
+
+---
+
+## 11. Basic Queries
+
+Create
+
+await prisma.user.create({
+  data: {
+    email: 'john@example.com',
+    name: 'John'
+  }
+})
+
+Find All
+
+await prisma.user.findMany()
+
+Find One
+
+await prisma.user.findUnique({
+  where: {
+    id: 1
+  }
+})
+
+Update
+
+await prisma.user.update({
+  where: {
+    id: 1
+  },
+  data: {
+    name: 'Updated'
+  }
+})
+
+Delete
+
+await prisma.user.delete({
+  where: {
+    id: 1
+  }
+})
+
+---
+
+## 12. Schema Change
+
+After editing schema.prisma:
+
+npx prisma migrate dev --name change_name
+
+Example:
+
+npx prisma migrate dev --name add-post-model
+
+---
+
+## 13. Existing DB
+
+Use:
+
+npx prisma db pull
+
+---
+
+## 14. Minimal Structure
+
+project/
+
+├── generated/
+├── prisma/
+│   └── schema.prisma
+├── prisma.js
+├── index.js
+├── .env
+└── package.json

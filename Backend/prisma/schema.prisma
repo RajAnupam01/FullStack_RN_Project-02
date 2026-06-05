@@ -1,0 +1,225 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique @db.VarChar(50)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String
+  bio          String?
+  avatarUrl    String?
+  avatarPublicId String?
+  reputation   Int      @default(0)
+  role         UserRole @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  questions             Question[]
+  answers               Answer[]
+  comments              Comment[]
+  followers             Follow[]       @relation("UserFollowers")
+  following             Follow[]       @relation("UserFollowing")
+  notificationsReceived Notification[] @relation("NotificationRecipient")
+  notificationsSent     Notification[] @relation("NotificationActor")
+  questionVotes         QuestionVote[]
+  answerVotes           AnswerVote[]
+  bookmarks             Bookmark[]
+  refreshTokens         RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id])
+  following User @relation("UserFollowing", fields: [followingId], references: [id])
+
+  @@id([followerId, followingId])
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String   @unique @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  questionTags QuestionTag[]
+}
+
+model Question {
+  id               String   @id @default(uuid())
+  userId           String
+  title            String   @db.VarChar(255)
+  slug             String   @unique @db.VarChar(255)
+  views            Int      @default(0)
+  acceptedAnswerId String?  @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user           User           @relation(fields: [userId], references: [id])
+  answers        Answer[]
+  comments       Comment[]
+  questionTags   QuestionTag[]
+  bookmarks      Bookmark[]
+  votes          QuestionVote[]
+  acceptedAnswer Answer?        @relation("AcceptedAnswer", fields: [acceptedAnswerId], references: [id])
+  notifications  Notification[]
+
+  @@index([userId])
+  @@index([views])
+}
+
+model QuestionTag {
+  questionId String
+  tagId      String
+  createdAt  DateTime @default(now())
+
+  question Question @relation(fields: [questionId], references: [id])
+  tag      Tag      @relation(fields: [tagId], references: [id])
+
+  @@id([questionId, tagId])
+  @@index([tagId])
+}
+
+model Answer {
+  id         String   @id @default(uuid())
+  questionId String
+  userId     String
+  content    String
+  imageUrl   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  question      Question       @relation(fields: [questionId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
+  comments      Comment[]
+  votes         AnswerVote[]
+  acceptedBy    Question?      @relation("AcceptedAnswer")
+  notifications Notification[]
+
+  @@index([questionId])
+  @@index([userId])
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  userId     String
+  questionId String?
+  answerId   String?
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id])
+  question      Question?      @relation(fields: [questionId], references: [id])
+  answer        Answer?        @relation(fields: [answerId], references: [id])
+  notifications Notification[]
+
+  @@index([questionId])
+  @@index([answerId])
+  @@index([userId])
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
+}
+
+model QuestionVote {
+  userId     String
+  questionId String
+  voteType   VoteType
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@id([userId, questionId])
+  @@index([questionId])
+}
+
+model AnswerVote {
+  userId    String
+  answerId  String
+  voteType  VoteType
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  answer Answer @relation(fields: [answerId], references: [id])
+
+  @@id([userId, answerId])
+  @@index([answerId])
+}
+
+model Bookmark {
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@id([userId, questionId])
+  @@index([questionId])
+}
+
+enum NotificationType {
+  NEW_COMMENT
+  NEW_ANSWER
+  ANSWER_ACCEPTED
+  NEW_FOLLOWER
+  ANSWER_UPVOTE
+  QUESTION_UPVOTE
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  userId     String // recipient
+  actorId    String?
+  questionId String?
+  answerId   String?
+  commentId  String?
+  type       NotificationType
+  message    String
+  isRead     Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+
+  user     User      @relation("NotificationRecipient", fields: [userId], references: [id])
+  actor    User?     @relation("NotificationActor", fields: [actorId], references: [id])
+  question Question? @relation(fields: [questionId], references: [id])
+  answer   Answer?   @relation(fields: [answerId], references: [id])
+  comment  Comment?  @relation(fields: [commentId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+}
