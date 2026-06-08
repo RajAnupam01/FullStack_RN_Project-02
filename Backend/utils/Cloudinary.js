@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
-import {ApiError }from "../utils/ApiError.js"
+
 
 dotenv.config();
 
@@ -37,9 +37,10 @@ export const uploadImageToCloudinary = (buffer, folder = 'RN_Project_02') => {
 export const deleteImageFromCloudinary = async (publicId) => {
   try {
     return await cloudinary.uploader.destroy(publicId);
-  } catch (error) {
+  } catch (err) {
     console.error("Cloudinary Image Destroy Error:", error.message, error.stack);
-
-    throw new ApiError(500, "Failed to destroy image from Cloudinary");
+    const error = new Error("Failed to destroy image from cloudinary")
+    error.statusCode = 500
+    throw error
   }
 };

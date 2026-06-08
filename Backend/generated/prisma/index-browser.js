@@ -178,6 +178,7 @@ exports.Prisma.AnswerScalarFieldEnum = {
   userId: 'userId',
   content: 'content',
   imageUrl: 'imageUrl',
+  imagePublicId: 'imagePublicId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

@@ -9250,6 +9250,7 @@ export namespace Prisma {
     userId: string | null
     content: string | null
     imageUrl: string | null
+    imagePublicId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -9260,6 +9261,7 @@ export namespace Prisma {
     userId: string | null
     content: string | null
     imageUrl: string | null
+    imagePublicId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -9270,6 +9272,7 @@ export namespace Prisma {
     userId: number
     content: number
     imageUrl: number
+    imagePublicId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -9282,6 +9285,7 @@ export namespace Prisma {
     userId?: true
     content?: true
     imageUrl?: true
+    imagePublicId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -9292,6 +9296,7 @@ export namespace Prisma {
     userId?: true
     content?: true
     imageUrl?: true
+    imagePublicId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -9302,6 +9307,7 @@ export namespace Prisma {
     userId?: true
     content?: true
     imageUrl?: true
+    imagePublicId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -9385,6 +9391,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl: string | null
+    imagePublicId: string | null
     createdAt: Date
     updatedAt: Date
     _count: AnswerCountAggregateOutputType | null
@@ -9412,6 +9419,7 @@ export namespace Prisma {
     userId?: boolean
     content?: boolean
     imageUrl?: boolean
+    imagePublicId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     question?: boolean | QuestionDefaultArgs<ExtArgs>
@@ -9429,6 +9437,7 @@ export namespace Prisma {
     userId?: boolean
     content?: boolean
     imageUrl?: boolean
+    imagePublicId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     question?: boolean | QuestionDefaultArgs<ExtArgs>
@@ -9441,6 +9450,7 @@ export namespace Prisma {
     userId?: boolean
     content?: boolean
     imageUrl?: boolean
+    imagePublicId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     question?: boolean | QuestionDefaultArgs<ExtArgs>
@@ -9453,11 +9463,12 @@ export namespace Prisma {
     userId?: boolean
     content?: boolean
     imageUrl?: boolean
+    imagePublicId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AnswerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "questionId" | "userId" | "content" | "imageUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["answer"]>
+  export type AnswerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "questionId" | "userId" | "content" | "imageUrl" | "imagePublicId" | "createdAt" | "updatedAt", ExtArgs["result"]["answer"]>
   export type AnswerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     question?: boolean | QuestionDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -9492,6 +9503,7 @@ export namespace Prisma {
       userId: string
       content: string
       imageUrl: string | null
+      imagePublicId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["answer"]>
@@ -9928,6 +9940,7 @@ export namespace Prisma {
     readonly userId: FieldRef<"Answer", 'String'>
     readonly content: FieldRef<"Answer", 'String'>
     readonly imageUrl: FieldRef<"Answer", 'String'>
+    readonly imagePublicId: FieldRef<"Answer", 'String'>
     readonly createdAt: FieldRef<"Answer", 'DateTime'>
     readonly updatedAt: FieldRef<"Answer", 'DateTime'>
   }
@@ -16100,6 +16113,7 @@ export namespace Prisma {
     userId: 'userId',
     content: 'content',
     imageUrl: 'imageUrl',
+    imagePublicId: 'imagePublicId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -16724,6 +16738,7 @@ export namespace Prisma {
     userId?: StringFilter<"Answer"> | string
     content?: StringFilter<"Answer"> | string
     imageUrl?: StringNullableFilter<"Answer"> | string | null
+    imagePublicId?: StringNullableFilter<"Answer"> | string | null
     createdAt?: DateTimeFilter<"Answer"> | Date | string
     updatedAt?: DateTimeFilter<"Answer"> | Date | string
     question?: XOR<QuestionScalarRelationFilter, QuestionWhereInput>
@@ -16740,6 +16755,7 @@ export namespace Prisma {
     userId?: SortOrder
     content?: SortOrder
     imageUrl?: SortOrderInput | SortOrder
+    imagePublicId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     question?: QuestionOrderByWithRelationInput
@@ -16759,6 +16775,7 @@ export namespace Prisma {
     userId?: StringFilter<"Answer"> | string
     content?: StringFilter<"Answer"> | string
     imageUrl?: StringNullableFilter<"Answer"> | string | null
+    imagePublicId?: StringNullableFilter<"Answer"> | string | null
     createdAt?: DateTimeFilter<"Answer"> | Date | string
     updatedAt?: DateTimeFilter<"Answer"> | Date | string
     question?: XOR<QuestionScalarRelationFilter, QuestionWhereInput>
@@ -16775,6 +16792,7 @@ export namespace Prisma {
     userId?: SortOrder
     content?: SortOrder
     imageUrl?: SortOrderInput | SortOrder
+    imagePublicId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: AnswerCountOrderByAggregateInput
@@ -16791,6 +16809,7 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"Answer"> | string
     content?: StringWithAggregatesFilter<"Answer"> | string
     imageUrl?: StringNullableWithAggregatesFilter<"Answer"> | string | null
+    imagePublicId?: StringNullableWithAggregatesFilter<"Answer"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Answer"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Answer"> | Date | string
   }
@@ -17551,6 +17570,7 @@ export namespace Prisma {
     id?: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     question: QuestionCreateNestedOneWithoutAnswersInput
@@ -17567,6 +17587,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutAnswerInput
@@ -17579,6 +17600,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     question?: QuestionUpdateOneRequiredWithoutAnswersNestedInput
@@ -17595,6 +17617,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutAnswerNestedInput
@@ -17609,6 +17632,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17617,6 +17641,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17627,6 +17652,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18375,6 +18401,7 @@ export namespace Prisma {
     userId?: SortOrder
     content?: SortOrder
     imageUrl?: SortOrder
+    imagePublicId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18385,6 +18412,7 @@ export namespace Prisma {
     userId?: SortOrder
     content?: SortOrder
     imageUrl?: SortOrder
+    imagePublicId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18395,6 +18423,7 @@ export namespace Prisma {
     userId?: SortOrder
     content?: SortOrder
     imageUrl?: SortOrder
+    imagePublicId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20179,6 +20208,7 @@ export namespace Prisma {
     id?: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     question: QuestionCreateNestedOneWithoutAnswersInput
@@ -20193,6 +20223,7 @@ export namespace Prisma {
     questionId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutAnswerInput
@@ -20492,6 +20523,7 @@ export namespace Prisma {
     userId?: StringFilter<"Answer"> | string
     content?: StringFilter<"Answer"> | string
     imageUrl?: StringNullableFilter<"Answer"> | string | null
+    imagePublicId?: StringNullableFilter<"Answer"> | string | null
     createdAt?: DateTimeFilter<"Answer"> | Date | string
     updatedAt?: DateTimeFilter<"Answer"> | Date | string
   }
@@ -21156,6 +21188,7 @@ export namespace Prisma {
     id?: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutAnswersInput
@@ -21170,6 +21203,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutAnswerInput
@@ -21284,6 +21318,7 @@ export namespace Prisma {
     id?: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     question: QuestionCreateNestedOneWithoutAnswersInput
@@ -21299,6 +21334,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutAnswerInput
@@ -21499,6 +21535,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     question?: QuestionUpdateOneRequiredWithoutAnswersNestedInput
@@ -21514,6 +21551,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutAnswerNestedInput
@@ -22161,6 +22199,7 @@ export namespace Prisma {
     id?: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     question: QuestionCreateNestedOneWithoutAnswersInput
@@ -22176,6 +22215,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     votes?: AnswerVoteUncheckedCreateNestedManyWithoutAnswerInput
@@ -22339,6 +22379,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     question?: QuestionUpdateOneRequiredWithoutAnswersNestedInput
@@ -22354,6 +22395,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votes?: AnswerVoteUncheckedUpdateManyWithoutAnswerNestedInput
@@ -22626,6 +22668,7 @@ export namespace Prisma {
     id?: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     question: QuestionCreateNestedOneWithoutAnswersInput
@@ -22641,6 +22684,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutAnswerInput
@@ -22727,6 +22771,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     question?: QuestionUpdateOneRequiredWithoutAnswersNestedInput
@@ -22742,6 +22787,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutAnswerNestedInput
@@ -23088,6 +23134,7 @@ export namespace Prisma {
     id?: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     question: QuestionCreateNestedOneWithoutAnswersInput
@@ -23103,6 +23150,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutAnswerInput
@@ -23316,6 +23364,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     question?: QuestionUpdateOneRequiredWithoutAnswersNestedInput
@@ -23331,6 +23380,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutAnswerNestedInput
@@ -23384,6 +23434,7 @@ export namespace Prisma {
     questionId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -23501,6 +23552,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     question?: QuestionUpdateOneRequiredWithoutAnswersNestedInput
@@ -23515,6 +23567,7 @@ export namespace Prisma {
     questionId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutAnswerNestedInput
@@ -23528,6 +23581,7 @@ export namespace Prisma {
     questionId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -23760,6 +23814,7 @@ export namespace Prisma {
     userId: string
     content: string
     imageUrl?: string | null
+    imagePublicId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -23805,6 +23860,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutAnswersNestedInput
@@ -23819,6 +23875,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutAnswerNestedInput
@@ -23832,6 +23889,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

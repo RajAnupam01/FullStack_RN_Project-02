@@ -179,6 +179,46 @@ class QuestionController {
         res.status(200).json(questions)
     }
 
+    static async acceptAnswer(req, res) {
+        const { questionId, answerId } = req.body;
+        const userId = req.user.userId;
+
+        const question = await prisma.question.findUnique({ where: { questionId } })
+        if (!question) {
+            const error = new Error("Question not found.")
+            error.statusCode = 404
+            throw error
+        }
+
+        if (question.userId !== userId) {
+            return res.status(403).json({ message: "You are not authroized to accept answer" })
+        }
+
+        const answer = await prisma.answer.findUnique({ where: { answerId } })
+        if (!answer || answer.questionId !== questionId) {
+            return res.status(400).json({ message: "Answer does not belong to this question." })
+        }
+
+        const updatedQuestion = await prisma.question.update({
+            where: { id: questionId },
+            data: { acceptedAnswerId: answerId },
+            include: { acceptedAnswer: true }
+        })
+
+        await prisma.user.update({
+            where:{id:answer.userId},
+            data:{reputation:{increment:15}}
+        })
+
+        await prisma.user.update({
+            where:{id:userId},
+            data:{reputation:{increment:3}}
+        })
+
+        res.status(200).json({ message: "Answer accepted successfully", question: updatedQuestion })
+
+    }
+
 
 }
 
