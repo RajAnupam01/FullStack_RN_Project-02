@@ -33,6 +33,17 @@ class AnswerController {
       include: { user: true, question: true }
     })
 
+    await prisma.notification.create({
+      data:{
+        userId:questionId.userId,
+        actorId:userId,
+        questionId:questionId,
+        answerId:answer.id,
+        type:"NEW_ANSWER",
+        message:"Your question received the answer."
+      }
+    })
+
     await prisma.user.update({
       where:{id:userId},
       data:{reputation:{increment:5}}

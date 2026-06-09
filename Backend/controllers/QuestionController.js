@@ -215,11 +215,18 @@ class QuestionController {
             data:{reputation:{increment:3}}
         })
 
+        await prisma.notification.create({
+            data:{
+                userId:answer.userId,
+                actorId:userId,
+                questionId:questionId,
+                answerId:answerId,
+                type:"ANSWER_ACCEPTED",
+                message:"Your answer was accepted."
+            }
+        })
         res.status(200).json({ message: "Answer accepted successfully", question: updatedQuestion })
-
     }
-
-
 }
 
 export default QuestionController

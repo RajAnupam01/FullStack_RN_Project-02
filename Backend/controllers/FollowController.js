@@ -24,6 +24,14 @@ class FollowController {
       data: { followerId: currentUserId, followingId: targetUserId }
     })
 
+    await prisma.notification.create({
+      data:{
+        userId:targetUserId,
+        actorId:currentUserId,
+        type:"NEW_FOLLOWER",
+        message:"You have a new follower."
+      }
+    })
     return res.status(201).json({ message: "Followed user successfully" })
   }
 
