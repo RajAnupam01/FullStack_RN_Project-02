@@ -1,73 +1,135 @@
 import prisma from "../lib/prisma.js"
+import ApiError from "../utils/ApiError.js"
+import ApiResponse from "../utils/ApiResponse.js"
 
 class BookMarkController {
+
     static async createBookMark(req, res) {
-        const userId = req.userId
-        const { questionId } = req.body;
+
+        const userId = req.user.userId
+        const { questionId } = req.body
 
         if (!questionId) {
-            const error = new Error("QuestionId is required.")
-            error.statusCode = 400
-            throw error
+            throw new ApiError(
+                "QuestionId is required.",
+                400
+            )
         }
 
-        const question = await prisma.question.findUnique({ where: { id: questionId } })
+        const question =
+            await prisma.question.findUnique({
+                where: { id: questionId }
+            })
+
         if (!question) {
-            const error = new Error("Question not found.")
-            error.statusCode = 404
-            throw error
+            throw new ApiError(
+                "Question not found.",
+                404
+            )
         }
-        const existing = await prisma.bookmark.findUnique({
-            where: { userId_questionId: { userId, questionId } }
-        })
+
+        const existing =
+            await prisma.bookmark.findUnique({
+                where: {
+                    userId_questionId: {
+                        userId,
+                        questionId
+                    }
+                }
+            })
 
         if (existing) {
-            return res.status(400).json({ message: "Already bookmarked" })
+            throw new ApiError(
+                "Question already bookmarked",
+                400
+            )
         }
 
-        const bookmark = await prisma.bookmark.create({
-            data: { userId, questionId }
-        })
+        const bookmark =
+            await prisma.bookmark.create({
+                data: {
+                    userId,
+                    questionId
+                }
+            })
 
-        res.status(201).json({ message: "Question bookmarked successfully", bookmark })
-
+        return ApiResponse(
+            res,
+            201,
+            "Question bookmarked successfully",
+            bookmark
+        )
     }
-    static async deleteBookMark(req, res) {
-        const userId = req.user.userId;
-        const { questionId } = req.params;
 
-        const existing = await prisma.findUnique({
-            where: { userId_questionId: { userId, questionId } }
-        })
+    static async deleteBookMark(req, res) {
+
+        const userId = req.user.userId
+        const { questionId } = req.params
+
+        const existing =
+            await prisma.bookmark.findUnique({
+                where: {
+                    userId_questionId: {
+                        userId,
+                        questionId
+                    }
+                }
+            })
+
         if (!existing) {
-            return res.status(404).json({ message: "Bookmark not found" })
+            throw new ApiError(
+                "Bookmark not found",
+                404
+            )
         }
+
         await prisma.bookmark.delete({
-            where: { userId_questionId: { userId, questionId } }
+            where: {
+                userId_questionId: {
+                    userId,
+                    questionId
+                }
+            }
         })
-        return res.status(200).json({ message: "Bookmark removed successfully" })
+
+        return ApiResponse(
+            res,
+            200,
+            "Bookmark removed successfully"
+        )
     }
 
     static async getMyBookMarks(req, res) {
-        
-        const userId = req.user.userId;
-        const bookmarks = await prisma.bookmark.findMany({
-            where: { userId },
-            include: {
-                question: {
-                    include: {
-                        user: true,
-                        questionTags: { include: { tag: true } }
-                    }
-                }
-            },
-            orderBy: { createdAt: "desc" }
-        })
-        if (!bookmarks || bookmarks.length === 0) {
-            return res.status(404).json({ message: "No bookmarks found" })
-        }
 
-        res.status(200).json(bookmarks)
+        const userId = req.user.userId
+
+        const bookmarks =
+            await prisma.bookmark.findMany({
+                where: { userId },
+                include: {
+                    question: {
+                        include: {
+                            user: true,
+                            questionTags: {
+                                include: {
+                                    tag: true
+                                }
+                            }
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: "desc"
+                }
+            })
+
+        return ApiResponse(
+            res,
+            200,
+            "Bookmarks fetched successfully",
+            bookmarks
+        )
     }
 }
+
 export default BookMarkController

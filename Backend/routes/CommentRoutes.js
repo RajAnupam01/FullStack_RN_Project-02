@@ -2,10 +2,11 @@ import express from "express"
 import CommentController from "../controllers/CommentController.js"
 import AsyncHandler from "../utils/AsyncHandler.js"
 import AuthMiddleware from "../middlewares/authMiddleware.js"
+import { postLimiter } from "../config/globalLimiter.js";
 
 const router = express.Router()
 
-router.post("/", AuthMiddleware, AsyncHandler(CommentController.createComment))
+router.post("/",postLimiter ,AuthMiddleware, AsyncHandler(CommentController.createComment))
 router.put("/:id", AuthMiddleware, AsyncHandler(CommentController.updateComment))
 router.delete("/:id", AuthMiddleware, AsyncHandler(CommentController.deleteComment))
 

@@ -1,31 +1,61 @@
 import prisma from "../lib/prisma.js"
+import ApiError from "../utils/ApiError.js"
+import ApiResponse from "../utils/ApiResponse.js"
 
-class TagController{
-    static async createTags(req,res){
-        const {name} = req.body;
-        if(!name){
-            const error = new Error("Tag Name is required.")
-            error.statusCode = 400
-            throw err
-        }
-        const normalized = name.toLowerCase().trim()
+class TagController {
 
-        const existingTag = await prisma.tag.findUnique({
-            where:{name:normalized}
-        })
-        if(existingTag){
-            return res.status(200).json({message:"Tag Already exist.",tag:existingTag})
-        }
-        const tag = await prisma.tag.create({
-            data:{name:normalized}
-        })
-        res.status(201).json({ message: "Tag created successfully", tag })
+  static async createTags(req, res) {
+
+    const { name } = req.body
+
+    if (!name) {
+      throw new ApiError(
+        "Tag Name is required.",
+        400
+      )
     }
 
+    const normalized = name
+      .toLowerCase()
+      .trim()
 
-    static async getTags(req,res){
-        const tags = await prisma.tag.findMany()
-        return res.status(200).json(tags)
+    const existingTag =
+      await prisma.tag.findUnique({
+        where: { name: normalized }
+      })
+
+    if (existingTag) {
+      return ApiResponse(
+        res,
+        200,
+        "Tag already exists",
+        existingTag
+      )
     }
+
+    const tag = await prisma.tag.create({
+      data: { name: normalized }
+    })
+
+    return ApiResponse(
+      res,
+      201,
+      "Tag created successfully",
+      tag
+    )
+  }
+
+  static async getTags(req, res) {
+
+    const tags = await prisma.tag.findMany()
+
+    return ApiResponse(
+      res,
+      200,
+      "Tags fetched successfully",
+      tags
+    )
+  }
 }
+
 export default TagController

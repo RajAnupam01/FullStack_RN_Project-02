@@ -1,52 +1,105 @@
 import prisma from "../lib/prisma.js"
+import ApiError from "../utils/ApiError.js"
+import ApiResponse from "../utils/ApiResponse.js"
 
 class NotificationController {
-    static async getNotifications(req, res) {
-        const userId = req.user.userId;
 
-        const notifications = await prisma.notification.findMany({
-            where: { userId },
-            orderBy: { createdAt: "desc" },
-            include: {
-                actor: { select: { id: true, username: true } },
-                question: { select: { id: true, title: true } },
-                answer: { select: { id: true, content: true } },
-                comment: { select: { id: true, comment: true } }
-            }
-        })
-        res.status(200).json({ notifications })
-    }
+  static async getNotifications(req, res) {
 
-    static async readNotification(req, res) {
-        const { id } = req.params;
-        const userId = req.user.userId;
+    const userId = req.user.userId
 
-        const notification = await prisma.notification.findUnique({ where: { id } })
-        if (!notification || notification.userId !== userId) {
-            return res.status(404).json({ message: "Notification not found" })
+    const notifications =
+      await prisma.notification.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        include: {
+          actor: {
+            select: { id: true, username: true }
+          },
+          question: {
+            select: { id: true, title: true }
+          },
+          answer: {
+            select: { id: true, content: true }
+          },
+          comment: {
+            select: { id: true, comment: true }
+          }
         }
+      })
 
-        const updated = await prisma.notification.update({
-            where: { id },
-            data: { isRead: true }
-        })
+    return ApiResponse(
+      res,
+      200,
+      "Notifications fetched successfully",
+      notifications
+    )
+  }
 
-        res.status(200).json({ message: "Notification marked as read", notification: updated })
+  static async readNotification(req, res) {
+
+    const { id } = req.params
+    const userId = req.user.userId
+
+    const notification =
+      await prisma.notification.findUnique({
+        where: { id }
+      })
+
+    if (
+      !notification ||
+      notification.userId !== userId
+    ) {
+      throw new ApiError(
+        "Notification not found",
+        404
+      )
     }
-    static async deleteNotification(req, res) {
-        const userId = req.user.userId
-        const { id } = req.params
 
-        const notification = await prisma.notification.findUnique({ where: { id } })
-        if (!notification || notification.userId !== userId) {
-            return res.status(404).json({ message: "Notification not found" })
-        }
+    const updated =
+      await prisma.notification.update({
+        where: { id },
+        data: { isRead: true }
+      })
 
-        await prisma.notification.delete({ where: { id } })
+    return ApiResponse(
+      res,
+      200,
+      "Notification marked as read",
+      updated
+    )
+  }
 
-        res.status(200).json({ message: "Notification deleted" })
+  static async deleteNotification(req, res) {
+
+    const { id } = req.params
+    const userId = req.user.userId
+
+    const notification =
+      await prisma.notification.findUnique({
+        where: { id }
+      })
+
+    if (
+      !notification ||
+      notification.userId !== userId
+    ) {
+      throw new ApiError(
+        "Notification not found",
+        404
+      )
     }
 
+    await prisma.notification.delete({
+      where: { id }
+    })
+
+    return ApiResponse(
+      res,
+      200,
+      "Notification deleted successfully"
+    )
+  }
 }
 
-export default NotificationController;
+export default NotificationController

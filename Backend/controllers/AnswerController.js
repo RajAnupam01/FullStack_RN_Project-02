@@ -1,4 +1,7 @@
 import prisma from "../lib/prisma.js"
+import ApiError from "../utils/ApiError.js"
+import ApiResponse from "../utils/ApiResponse.js"
+import {buildAnswerQuery} from "../config/queryBuilder.js"
 import { deleteImageFromCloudinary, uploadImageToCloudinary } from "../utils/Cloudinary.js"
 
 class AnswerController {
@@ -7,16 +10,13 @@ class AnswerController {
     const { questionId, content } = req.body
 
     if (!questionId || !content) {
-      const error = new Error("QuestionId and content are required.")
-      error.statusCode = 400
-      throw error
+      throw new ApiError("QuestionId and content are required.", 400)
     }
 
     const question = await prisma.question.findUnique({ where: { id: questionId } })
+
     if (!question) {
-      const error = new Error("Question not found.")
-      error.statusCode = 404
-      throw error
+      throw new ApiError("Question not found", 404)
     }
 
     const payload = { content, questionId, userId }
@@ -34,32 +34,37 @@ class AnswerController {
     })
 
     await prisma.notification.create({
-      data:{
-        userId:questionId.userId,
-        actorId:userId,
-        questionId:questionId,
-        answerId:answer.id,
-        type:"NEW_ANSWER",
-        message:"Your question received the answer."
+      data: {
+        userId: questionId.userId,
+        actorId: userId,
+        questionId: questionId.id,
+        answerId: answer.id,
+        type: "NEW_ANSWER",
+        message: "Your question received the answer."
       }
     })
 
     await prisma.user.update({
-      where:{id:userId},
-      data:{reputation:{increment:5}}
+      where: { id: userId },
+      data: { reputation: { increment: 5 } }
     })
 
-    res.status(201).json({ message: "Answer created successfully", answer })
+    return ApiResponse(res, 201, "Answer Created Successfully", answer)
   }
 
   static async getAnswersByQuestion(req, res) {
-    const { questionId } = req.params
+    const { questionId } = req.params;
+
+    const queryOptions = buildAnswerQuery(req.query);
+
+
     const answers = await prisma.answer.findMany({
       where: { questionId },
+      ...queryOptions,
       include: { user: true, comments: true, votes: true },
-      orderBy: { createdAt: "desc" }
     })
-    res.status(200).json(answers)
+    
+    return ApiResponse(res, 200, "Answers fetched successfully,", answers)
   }
 
   static async updateAnswer(req, res) {
@@ -69,14 +74,10 @@ class AnswerController {
 
     const answer = await prisma.answer.findUnique({ where: { id } })
     if (!answer) {
-      const error = new Error("Answer not found.")
-      error.statusCode = 404
-      throw error
+      throw new ApiError("Answer not found.", 404)
     }
     if (answer.userId !== userId) {
-      const error = new Error("Not authorized to edit this answer")
-      error.statusCode = 403
-      throw error
+      throw new ApiError("Not authorized to edit this answer", 403)
     }
 
     const payload = {}
@@ -98,7 +99,8 @@ class AnswerController {
       include: { user: true }
     })
 
-    res.status(200).json({ message: "Answer updated successfully", updated })
+    return ApiResponse(res, 200, "Answer updated successfuly,", updated)
+
   }
 
   static async deleteAnswer(req, res) {
@@ -107,14 +109,10 @@ class AnswerController {
 
     const answer = await prisma.answer.findUnique({ where: { id } })
     if (!answer) {
-      const error = new Error("Answer not found.")
-      error.statusCode = 404
-      throw error
+      throw new ApiError("Answer not found.", 404)
     }
     if (answer.userId !== userId) {
-      const error = new Error("You are not authorized to delete this answer.")
-      error.statusCode = 403
-      throw error
+      throw new ApiError("You are not authorized to delete this answer.", 403)
     }
     if (answer.imagePublicId) {
       await deleteImageFromCloudinary(answer.imagePublicId)
@@ -123,11 +121,11 @@ class AnswerController {
     await prisma.answer.delete({ where: { id } })
 
     await prisma.user.update({
-      where:{id:userId},
-      data:{reputation:{decrement:5}}
+      where: { id: userId },
+      data: { reputation: { decrement: 5 } }
     })
 
-    res.status(200).json({ message: "Answer deleted successfully" })
+    return ApiResponse(res, 200, "Answer deleted successfully.")
   }
 
   static async getAnswersByMe(req, res) {
@@ -138,13 +136,7 @@ class AnswerController {
       orderBy: { createdAt: "desc" }
     })
 
-    if (!answers || answers.length === 0) {
-      const error = new Error("You have not posted any answers yet")
-      error.statusCode = 404
-      throw error
-    }
-
-    res.status(200).json(answers)
+    return ApiResponse(res, 200, "Answers fetched successfully.", answers)
   }
 }
 

@@ -1,19 +1,18 @@
 import prisma from "../lib/prisma.js"
+import ApiError from "../utils/ApiError.js"
+import ApiResponse from "../utils/ApiResponse.js"
+import {buildCommentQuery} from "../config/queryBuilder.js"
 
 class CommentController {
     static async createComment(req, res) {
         const userId = req.user.userId;
         const { questionId, answerId, content } = req.body;
 
-        if (!content) {
-            const error = new Error("Comment content is required.")
-            error.statusCode = 400
-            throw error
+        if (!content?.trim()) {
+            throw new ApiError("Comment content is required.", 400)
         }
         if (!questionId && !answerId) {
-            const error = new Error("Either questionId or answerId is required.")
-            error.statusCode = 400
-            throw error
+            throw new ApiError("Either questionId or answerId is required.", 400)
         }
 
         const comment = await prisma.comment.create({
@@ -53,10 +52,7 @@ class CommentController {
             }
         }
 
-
-
-
-        res.status(201).json({ message: "Comment created successfully", comment })
+        return ApiResponse(res, 201, "Comment created successfully.", comment)
     }
 
 
@@ -67,20 +63,26 @@ class CommentController {
 
         const comment = await prisma.comment.findUnique({ where: { id } })
         if (!comment) {
-            const error = new Error("Comment not found.")
-            error.statusCode = 404
-            throw error
+            throw new ApiError(
+                "Comment not found.",
+                404
+            )
         }
-        if (comment.userId != userId) {
-            const error = new Error("Not authorized to edit this comment.")
-            error.statusCode = 403
-            throw error
+        if (comment.userId !== userId) {
+            throw new ApiError("Not authorized to edit this comment.", 403)
         }
+
         const updated = await prisma.comment.update({
             where: { id },
             data: { content }
         })
-        res.status(200).json({ message: "Comment updated successfully", comment: updated })
+
+        return ApiResponse(
+            res,
+            200,
+            "Comment updated successfully",
+            updated
+        )
     }
 
     static async RemoveComment(req, res) {
@@ -89,41 +91,64 @@ class CommentController {
 
         const comment = await prisma.comment.findUnique({ where: { id } })
         if (!comment) {
-            const error = new Error("Comment not found.")
-            error.statusCode = 404
-            throw error
+            throw new ApiError(
+                "Comment not found.",
+                404
+            )
         }
 
-        if (comment.userId != userId) {
-            const error = new Error("Not authorized to delete this comment.")
-            error.statusCode = 403
-            throw error
+        if (comment.userId !== userId) {
+            throw new ApiError(
+                "Not authorized to delete this comment.",
+                403
+            )
         }
         await prisma.comment.delete({ where: { id } });
 
-        res.status(200).json({ message: "Comment deleted successfully" })
+        return ApiResponse(
+            res,
+            200,
+            "Comment deleted successfully."
+        )
     }
 
     static async getCommentForQuestion(req, res) {
         const { id } = req.params;
 
+        const queryOptions = buildCommentQuery(req.query);
+
+
         const comments = await prisma.comment.findMany({
             where: { questionId: id },
+            ...queryOptions,
             include: { user: { select: { id: true, avatarUrl: true, username: true } } },
-            orderBy: { createdAt: "desc" }
         })
-        res.status(200).json(comments)
+        return ApiResponse(
+            res,
+            200,
+            "Comments fetched successfully.",
+            comments
+        )
     }
 
     static async getCommentForAnswer(req, res) {
         const { id } = req.params;
 
+        const queryOptions = buildCommentQuery(req.query);
+
+
         const comments = await prisma.comment.findMany({
             where: { answerId: id },
+            ...queryOptions,
             include: { user: { select: { id: true, avatarUrl: true, username: true } } },
-            orderBy: { createdAt: "desc" }
         })
-        res.status(200).json(comments)
+        
+        return ApiResponse(
+            res,
+            200,
+            "Comments fetched successfully.",
+            comments
+        )
     }
 
 

@@ -3,6 +3,8 @@ import vine from "@vinejs/vine";
 import { registerSchema, loginSchema } from "../validatations/AuthValidation.js";
 import { comparePassword, generateTokens, hashPassword } from "../helper/AuthHelper.js"
 import jwt from "jsonwebtoken"
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
 
 
 class AuthController {
@@ -16,12 +18,10 @@ class AuthController {
             data: body
         })
 
-        const findUser = await prisma.user.findUnique({ where: { email: (await payload).email } })
+        const findUser = await prisma.user.findUnique({ where: { email:payload.email } })
 
         if (findUser) {
-            const error = new Error("Email already taken, please choose different email")
-            error.statusCode= 400
-            throw error
+            throw new ApiError("Email already taken, please choose different email",400)
         }
 
         const hashedPassword = await hashPassword(payload.password)
@@ -36,16 +36,20 @@ class AuthController {
 
         const { accessToken, refreshToken } = await generateTokens(user.id)
 
-        res.status(201).json({
-            message: "User Registered Successfully",
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email
-            },
-            accessToken,
-            refreshToken
-        })
+        return ApiResponse(
+            res,
+            201,
+            "User Registered Successfully",
+            {
+                user:{
+                    id:user.id,
+                    username:user.username,
+                    email:user.email
+                },
+                accessToken,
+                refreshToken
+            }
+        )
 
     }
 
@@ -58,34 +62,34 @@ class AuthController {
             data: body
         })
 
-        const findUser = await prisma.user.findUnique({ where: { email: (await payload).email } })
+        const findUser = await prisma.user.findUnique({ where: { email: payload.email } })
 
         if (!findUser) {
-            const error = new Error("No User found with this Email")
-            error.statusCode = 400
-            throw error
+            throw new ApiError("No User found with this Email",400)
         }
 
         const comparedPassword = await comparePassword(payload.password, findUser.passwordHash)
 
         if (!comparedPassword) {
-            const error = new Error("Invalid credentials")
-            error.statusCode = 401
-            throw error
+           throw new ApiError("Invalid credentials",401)
         }
 
         const { accessToken, refreshToken } = await generateTokens(findUser.id)
 
-        return res.status(200).json({
-            message: "User logged in Successfully.",
-            user: {
-                id: findUser.id,
-                email: findUser.email,
-                username: findUser.username
-            },
-            accessToken,
-            refreshToken
-        })
+        return ApiResponse(
+            res,
+            200,
+            "User logged in successfully.",
+            {
+                user:{
+                    id:findUser.id,
+                    email:findUser.email,
+                    username:findUser.username
+                },
+                accessToken,
+                refreshToken
+            }
+        )
 
     }
 
@@ -96,9 +100,12 @@ class AuthController {
         await prisma.refreshToken.deleteMany({
             where: { userId }
         })
-        return res.status(200).json({
-            message: "User logged out successfully."
-        })
+       
+        return ApiResponse(
+            res,
+            200,
+            "User logged out successfully."
+        )
     }
 
 
@@ -106,18 +113,14 @@ class AuthController {
         const {refreshToken} = req.body
         
         if(!refreshToken){
-            const error = new Error("Refresh Token Required.")
-            error.statusCode=400
-            throw error
+           throw new ApiError("Refresh Token Required.",400)
         }
         
         let decoded
         try {
             decoded = jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET)
         } catch (err) {
-            const error = new Error("Invalid or Expired Refresh Token")
-            error.statusCode=403
-            throw error
+            throw new ApiError("Invalid or Expired Refresh Token",403)
         }
 
         const storedToken = await prisma.refreshToken.findUnique({
@@ -125,9 +128,7 @@ class AuthController {
         })
 
         if(!storedToken || storedToken.expiresAt < new Date()){
-            const error = new Error("Refresh Token not found or already expired.")
-            error.statusCode=403
-            throw error
+            throw new ApiError("Refresh Token not found or already expired.",403)
         }
         const userId = decoded.userId
 
@@ -137,11 +138,15 @@ class AuthController {
 
         const {accessToken,refreshToken:newRefreshToken} = await generateTokens(userId)
 
-        res.status(200).json({
-            message:"Token rotated successfully.",
-            accessToken,
-            refreshToken:newRefreshToken
-        })
+        return ApiResponse(
+            res,
+            200,
+            "Token rotated successfully.",
+            {
+                accessToken,
+                refreshToken:newRefreshToken
+            }
+        )
     }
 }
 

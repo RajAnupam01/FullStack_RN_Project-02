@@ -1,8 +1,11 @@
 import express from "express"
 import dotenv from "dotenv"
 dotenv.config()
+import {globalLimiter} from "./config/globalLimiter.js"
 
 const app = express()
+
+app.use(globalLimiter)
 
 import AuthRouter from "./routes/AuthRoutes.js"
 import UserRouter from "./routes/UserRoutes.js"

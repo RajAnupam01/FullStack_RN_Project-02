@@ -2,10 +2,11 @@ import express from "express"
 import QuestionController from "../controllers/QuestionController.js"
 import AsyncHandler from "../utils/AsyncHandler.js"
 import AuthMiddleware from "../middlewares/authMiddleware.js"
+import { postLimiter } from "../config/globalLimiter.js";
 
 const router = express.Router()
 
-router.post("/", AuthMiddleware, AsyncHandler(QuestionController.createQuestion))
+router.post("/",postLimiter ,AuthMiddleware, AsyncHandler(QuestionController.createQuestion))
 router.post("/acceptAnswer",AuthMiddleware,AsyncHandler(QuestionController.acceptAnswer))
 router.get("/", AsyncHandler(QuestionController.getAllQuestions))
 router.get("/:id", AsyncHandler(QuestionController.getQuestionById))
