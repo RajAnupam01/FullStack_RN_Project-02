@@ -2,7 +2,7 @@ import prisma from "../lib/prisma.js"
 import slugify from "slugify"
 import ApiError from "../utils/ApiError.js"
 import ApiResponse from "../utils/ApiResponse.js"
-import {buildQuestionQuery} from "../config/queryBuilder.js"
+import { buildQuestionQuery } from "../config/queryBuilder.js"
 
 class QuestionController {
 
@@ -184,8 +184,25 @@ class QuestionController {
   }
 
   static async updateQuestion(req, res) {
+
+    const userId = req.user.userId
     const { id } = req.params
     const { title, tags } = req.body
+
+    const Existquestion = await prisma.question.findUnique({
+      where: { id }
+    })
+
+    if (!Existquestion) {
+      throw new ApiError("Question not found.", 404)
+    }
+
+    if (Existquestion.userId !== userId) {
+      throw new ApiError(
+        "You are not authorized to update this question",
+        403
+      )
+    }
 
     const data = {}
 
@@ -247,8 +264,23 @@ class QuestionController {
   }
 
   static async deleteQuestion(req, res) {
-
     const { id } = req.params
+    const userId = req.user.userId
+
+    const question = await prisma.question.findUnique({
+      where: { id }
+    })
+
+    if (!question) {
+      throw new ApiError("Question not found.", 404)
+    }
+
+    if (question.userId !== userId) {
+      throw new ApiError(
+        "You are not authorized to delete this question.",
+        403
+      )
+    }
 
     await prisma.question.delete({
       where: { id }
@@ -307,6 +339,13 @@ class QuestionController {
       throw new ApiError(
         "Question not found.",
         404
+      )
+    }
+
+    if (question.acceptedAnswerId) {
+      throw new ApiError(
+        "An answer has already been accepted.",
+        400
       )
     }
 

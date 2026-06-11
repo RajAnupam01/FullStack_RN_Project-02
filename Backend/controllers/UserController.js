@@ -157,23 +157,23 @@ class UserController {
   }
 
   static async getFollowers(req, res) {
-
     const userId = req.params.id
 
-    const followers =
-      await prisma.follow.findMany({
-        where: { followerId: userId },
-        include: {
-          follower: {
-            select: {
-              id: true,
-              username: true,
-              bio: true,
-              avatarUrl: true
-            }
+    const followers = await prisma.follow.findMany({
+      where: {
+        followingId: userId
+      },
+      include: {
+        follower: {
+          select: {
+            id: true,
+            username: true,
+            bio: true,
+            avatarUrl: true
           }
         }
-      })
+      }
+    })
 
     return ApiResponse(
       res,
@@ -184,23 +184,23 @@ class UserController {
   }
 
   static async getFollowings(req, res) {
-
     const userId = req.params.id
 
-    const followings =
-      await prisma.follow.findMany({
-        where: { followingId: userId },
-        include: {
-          following: {
-            select: {
-              id: true,
-              username: true,
-              bio: true,
-              avatarUrl: true
-            }
+    const followings = await prisma.follow.findMany({
+      where: {
+        followerId: userId
+      },
+      include: {
+        following: {
+          select: {
+            id: true,
+            username: true,
+            bio: true,
+            avatarUrl: true
           }
         }
-      })
+      }
+    })
 
     return ApiResponse(
       res,

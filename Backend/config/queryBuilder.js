@@ -124,3 +124,20 @@ export function buildCommentQuery(query){
     take
   }
 }
+export function buildNotificationQuery(query) {
+  const {
+    page = 1,
+    limit = 20
+  } = query
+
+  const take = Number(limit)
+  const skip = (Number(page) - 1) * take
+
+  return {
+    orderBy: {
+      createdAt: "desc"
+    },
+    skip,
+    take
+  }
+}

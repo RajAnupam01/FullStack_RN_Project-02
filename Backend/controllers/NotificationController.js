@@ -1,6 +1,7 @@
 import prisma from "../lib/prisma.js"
 import ApiError from "../utils/ApiError.js"
 import ApiResponse from "../utils/ApiResponse.js"
+import {buildNotificationQuery} from "../config/queryBuilder.js"
 
 class NotificationController {
 
@@ -8,9 +9,12 @@ class NotificationController {
 
     const userId = req.user.userId
 
+    const queryOption = buildNotificationQuery(req.query)
+
     const notifications =
       await prisma.notification.findMany({
         where: { userId },
+        ...queryOption,
         orderBy: { createdAt: "desc" },
         include: {
           actor: {
@@ -23,7 +27,7 @@ class NotificationController {
             select: { id: true, content: true }
           },
           comment: {
-            select: { id: true, comment: true }
+            select: { id: true, content: true }
           }
         }
       })
