@@ -3,8 +3,7 @@ import ApiError from "../utils/ApiError.js"
 import ApiResponse from "../utils/ApiResponse.js"
 import {buildAnswerQuery} from "../config/queryBuilder.js"
 import { deleteImageFromCloudinary, uploadImageToCloudinary } from "../utils/Cloudinary.js"
-import NotificationService from "../services/NotificationService.js"
-import ReputationService from "../services/ReputationService.js"
+
 
 class AnswerController {
   static async createAnswer(req, res) {
