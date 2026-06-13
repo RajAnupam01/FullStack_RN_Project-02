@@ -13,9 +13,7 @@ class AnswerController {
     if (!questionId || !content) {
       throw new ApiError("QuestionId and content are required.", 400)
     }
-
     const question = await prisma.question.findUnique({ where: { id: questionId } })
-
     if (!question) {
       throw new ApiError("Question not found", 404)
     }
