@@ -2,6 +2,8 @@ import express from "express"
 import dotenv from "dotenv"
 dotenv.config()
 import {globalLimiter} from "./config/globalLimiter.js"
+import swaggerUi from "swagger-ui-express"
+import swaggerSpec from "./docs/swagger.js"
 
 const app = express()
 
@@ -23,6 +25,11 @@ import errorHandler from "./middlewares/errorHandler.js"
 
 
 app.use(express.json())
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+)
 
 
 app.use("/api/auth", AuthRouter)

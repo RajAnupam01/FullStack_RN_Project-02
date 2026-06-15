@@ -8,10 +8,10 @@ const router = express.Router()
 
 router.post("/",postLimiter ,AuthMiddleware, AsyncHandler(CommentController.createComment))
 router.put("/:id", AuthMiddleware, AsyncHandler(CommentController.updateComment))
-router.delete("/:id", AuthMiddleware, AsyncHandler(CommentController.deleteComment))
+router.delete("/:id", AuthMiddleware, AsyncHandler(CommentController.RemoveComment))
 
-router.get("/questions/:id/comments", AsyncHandler(CommentController.getCommentsForQuestion))
-router.get("/answers/:id/comments", AsyncHandler(CommentController.getCommentsForAnswer))
+router.get("/questions/:id/comments",AuthMiddleware ,AsyncHandler(CommentController.getCommentForAnswer))
+router.get("/answers/:id/comments", AuthMiddleware,AsyncHandler(CommentController.getCommentForAnswer))
 
 
 export default router
