@@ -11,9 +11,24 @@
  *   get:
  *     tags:
  *       - Notification
- *     summary: Get current user's notifications
+ *     summary: Get user notifications with pagination
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 20
+ *         description: Number of items per page
+
  *     responses:
  *       200:
  *         description: Notifications fetched successfully

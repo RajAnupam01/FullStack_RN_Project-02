@@ -12,6 +12,10 @@
  *     tags:
  *       - Comment
  *     summary: Create a comment on a question or answer
+ *     description: |
+ *       You must provide EITHER questionId OR answerId (not both).
+ *       - Use questionId to comment on a question
+ *       - Use answerId to comment on an answer
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -29,9 +33,6 @@
  *                 type: string
  *             required:
  *               - content
- *     responses:
- *       201:
- *         description: Comment created successfully
  */
 
 /**
@@ -97,8 +98,8 @@
  *   get:
  *     tags:
  *       - Comment
- *     summary: Get comments for a question
- *      security:
+ *     summary: Get comments for a question with pagination and sorting
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
@@ -106,6 +107,30 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Question ID
+
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [latest, oldest]
+ *           default: latest
+ *         description: Sort order
+
  *     responses:
  *       200:
  *         description: Comments fetched successfully
@@ -117,7 +142,7 @@
  *   get:
  *     tags:
  *       - Comment
- *     summary: Get comments for an answer
+ *     summary: Get comments for an answer with pagination and sorting
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -126,6 +151,30 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Answer ID
+
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [latest, oldest]
+ *           default: latest
+ *         description: Sort order
+
  *     responses:
  *       200:
  *         description: Comments fetched successfully

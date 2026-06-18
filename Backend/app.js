@@ -1,13 +1,13 @@
 import express from "express"
 import dotenv from "dotenv"
-dotenv.config()
-import {globalLimiter} from "./config/globalLimiter.js"
+import helmet from "helmet"
+import cors from "cors"
+import compression from "compression"
 import swaggerUi from "swagger-ui-express"
+
+import { globalLimiter } from "./config/globalLimiter.js"
 import swaggerSpec from "./docs/swagger.js"
-
-const app = express()
-
-app.use(globalLimiter)
+import errorHandler from "./middlewares/errorHandler.js"
 
 import AuthRouter from "./routes/AuthRoutes.js"
 import UserRouter from "./routes/UserRoutes.js"
@@ -18,20 +18,29 @@ import AnswerRouter from "./routes/AnswerRoutes.js"
 import BookMarkRouter from "./routes/BookMarkRoutes.js"
 import CommentRouter from "./routes/CommentRoutes.js"
 import VoteRouter from "./routes/VoteRoutes.js"
-import NotificationRouter from './routes/NotificationRoutes.js'
+import NotificationRouter from "./routes/NotificationRoutes.js"
 
+dotenv.config()
 
-import errorHandler from "./middlewares/errorHandler.js"
+const app = express()
 
+// security + performance
+app.use(helmet())
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
+app.use(compression())
 
+// body parsing
 app.use(express.json())
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec)
-)
 
+// rate limiter
+app.use(globalLimiter)
 
+// docs
+if (process.env.NODE_ENV !== "production") {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+}
+
+// routes
 app.use("/api/auth", AuthRouter)
 app.use("/api/user", UserRouter)
 app.use("/api/follow", FollowRouter)
@@ -41,8 +50,17 @@ app.use("/api/answer", AnswerRouter)
 app.use("/api/bookmark", BookMarkRouter)
 app.use("/api/comment", CommentRouter)
 app.use("/api/votes", VoteRouter)
-app.use("/api/notification",NotificationRouter)
+app.use("/api/notification", NotificationRouter)
 
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found"
+  })
+})
+
+// error handler
 app.use(errorHandler)
 
 export default app

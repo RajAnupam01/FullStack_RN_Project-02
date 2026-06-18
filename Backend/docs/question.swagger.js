@@ -41,9 +41,51 @@
  *   get:
  *     tags:
  *       - Question
- *     summary: Get all questions
+ *     summary: Get all questions with pagination, search, sorting, and filtering
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [latest, oldest]
+ *           default: latest
+ *         description: Sort by creation date
+
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by question title
+
+ *       - in: query
+ *         name: tag
+ *         schema:
+ *           type: string
+ *         description: Filter questions by tag name
+
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [answered, unanswered]
+ *         description: Filter by answer status
+
  *     responses:
  *       200:
  *         description: Questions fetched successfully

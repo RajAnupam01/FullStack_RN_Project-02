@@ -44,7 +44,7 @@
  *   get:
  *     tags:
  *       - Answer
- *     summary: Get answers for a question
+ *     summary: Get answers for a question with pagination and sorting
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -53,6 +53,30 @@
  *         required: true
  *         schema:
  *           type: string
+ *         description: Question ID
+
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [latest, oldest]
+ *           default: latest
+ *         description: Sort order
+
  *     responses:
  *       200:
  *         description: Answers fetched successfully
