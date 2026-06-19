@@ -142,7 +142,7 @@
  *     tags:
  *       - Question
  *     summary: Get questions by tag
- * security:
+ *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
