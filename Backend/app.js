@@ -24,21 +24,30 @@ dotenv.config()
 
 const app = express()
 
-// security + performance
+
 app.use(helmet())
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
 app.use(compression())
 
-// body parsing
 app.use(express.json())
 
-// rate limiter
+
 app.use(globalLimiter)
 
-// docs
-if (process.env.NODE_ENV !== "production") {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-}
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    project: "Question & Answer Platform API",
+    status: "Running",
+    documentation: "/api-docs",
+    message:
+      "Append '/api-docs' to this URL to view and test the API documentation using Swagger UI."
+  })
+})
+
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 // routes
 app.use("/api/auth", AuthRouter)
@@ -52,7 +61,7 @@ app.use("/api/comment", CommentRouter)
 app.use("/api/votes", VoteRouter)
 app.use("/api/notification", NotificationRouter)
 
-// 404 handler
+
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -60,7 +69,7 @@ app.use((req, res) => {
   })
 })
 
-// error handler
+
 app.use(errorHandler)
 
 export default app
