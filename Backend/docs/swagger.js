@@ -4,7 +4,7 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "StackIt API",
+      title: "Question-Answer platform API",
       version: "1.0.0",
       description: `
       
