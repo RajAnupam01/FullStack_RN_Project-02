@@ -23,7 +23,7 @@ const options = {
 
     servers: [
       {
-        url: "http://localhost:1111",
+        url: "https://question-answer-platform-api.onrender.com/",
       },
     ],
     components: {
